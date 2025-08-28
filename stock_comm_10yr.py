@@ -33,21 +33,20 @@ def get_shiller_data(xls_url):
 # --- 3. Streamlit App ---
 st.title("S&P vs PPIACO Line Chart")
 
-api_key = st.text_input("Enter your FRED API key:", type="password")
-if api_key:
-    fred_df = get_fred_ppiaco(api_key)
-    shiller_url = "https://img1.wsimg.com/blobby/go/e5e77e0b-59d1-44d9-ab25-4763ac982e53/downloads/f0faea35-265f-48c9-b948-d427e2c8adf7/ie_data.xls"
-    shiller_df = get_shiller_data(shiller_url)
+api_key = "2b974d0cfdaa48c443b89eda76d65215"
+fred_df = get_fred_ppiaco(api_key)
+shiller_url = "https://img1.wsimg.com/blobby/go/e5e77e0b-59d1-44d9-ab25-4763ac982e53/downloads/f0faea35-265f-48c9-b948-d427e2c8adf7/ie_data.xls"
+shiller_df = get_shiller_data(shiller_url)
 
-    # Merge on date
-    merged = pd.merge(shiller_df, fred_df, on='date', how='inner')
+# Merge on date
+merged = pd.merge(shiller_df, fred_df, on='date', how='inner')
 
-    # Plot
-    import matplotlib.pyplot as plt
-    fig, ax1 = plt.subplots()
-    ax1.plot(merged['date'], merged['S&P Comp. P'], color='blue', label='S&P Comp. P')
-    ax1.set_ylabel('S&P Comp. P', color='blue')
-    ax2 = ax1.twinx()
-    ax2.plot(merged['date'], merged['PPIACO'], color='red', label='PPIACO')
-    ax2.set_ylabel('PPIACO', color='red')
-    st.pyplot(fig)
+# Plot
+import matplotlib.pyplot as plt
+fig, ax1 = plt.subplots()
+ax1.plot(merged['date'], merged['S&P Comp. P'], color='blue', label='S&P Comp. P')
+ax1.set_ylabel('S&P Comp. P', color='blue')
+ax2 = ax1.twinx()
+ax2.plot(merged['date'], merged['PPIACO'], color='red', label='PPIACO')
+ax2.set_ylabel('PPIACO', color='red')
+st.pyplot(fig)
