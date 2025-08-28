@@ -56,8 +56,8 @@ fig.add_trace(go.Scatter(x=merged['date'], y=merged['S&P Comp. P'], name='S&P Co
 fig.add_trace(go.Scatter(x=merged['date'], y=merged['PPIACO'], name='PPIACO', yaxis='y2', mode='lines+markers', line=dict(color='red'), marker=dict(color='red'), hovertemplate='Date: %{x}<br>PPIACO: %{y:.2f}<extra></extra>'))
 fig.update_layout(
     xaxis=dict(title='Date'),
-    yaxis=dict(title='S&P Comp. P', titlefont=dict(color='blue'), tickfont=dict(color='blue')),
-    yaxis2=dict(title='PPIACO', titlefont=dict(color='red'), tickfont=dict(color='red'), overlaying='y', side='right'),
+    yaxis=dict(title='S&P Comp. P', tickfont=dict(color='blue')),
+    yaxis2=dict(title='PPIACO', tickfont=dict(color='red'), overlaying='y', side='right'),
     legend=dict(x=0.01, y=0.99),
     hovermode='x unified',
     margin=dict(l=40, r=40, t=40, b=40)
