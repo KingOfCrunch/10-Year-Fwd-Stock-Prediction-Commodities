@@ -49,12 +49,17 @@ shiller_df = get_shiller_data(shiller_url)
 # Merge on date
 merged = pd.merge(shiller_df, fred_df, on='date', how='inner')
 
-# Plot
-import matplotlib.pyplot as plt
-fig, ax1 = plt.subplots()
-ax1.plot(merged['date'], merged['S&P Comp. P'], color='blue', label='S&P Comp. P')
-ax1.set_ylabel('S&P Comp. P', color='blue')
-ax2 = ax1.twinx()
-ax2.plot(merged['date'], merged['PPIACO'], color='red', label='PPIACO')
-ax2.set_ylabel('PPIACO', color='red')
-st.pyplot(fig)
+# Interactive Plotly chart
+import plotly.graph_objects as go
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=merged['date'], y=merged['S&P Comp. P'], name='S&P Comp. P', yaxis='y1', mode='lines+markers', line=dict(color='blue'), marker=dict(color='blue'), hovertemplate='Date: %{x}<br>S&P Comp. P: %{y:.2f}<extra></extra>'))
+fig.add_trace(go.Scatter(x=merged['date'], y=merged['PPIACO'], name='PPIACO', yaxis='y2', mode='lines+markers', line=dict(color='red'), marker=dict(color='red'), hovertemplate='Date: %{x}<br>PPIACO: %{y:.2f}<extra></extra>'))
+fig.update_layout(
+    xaxis=dict(title='Date'),
+    yaxis=dict(title='S&P Comp. P', titlefont=dict(color='blue'), tickfont=dict(color='blue')),
+    yaxis2=dict(title='PPIACO', titlefont=dict(color='red'), tickfont=dict(color='red'), overlaying='y', side='right'),
+    legend=dict(x=0.01, y=0.99),
+    hovermode='x unified',
+    margin=dict(l=40, r=40, t=40, b=40)
+)
+st.plotly_chart(fig, use_container_width=True)
