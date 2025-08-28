@@ -47,13 +47,41 @@ shiller_url = "https://img1.wsimg.com/blobby/go/e5e77e0b-59d1-44d9-ab25-4763ac98
 shiller_df = get_shiller_data(shiller_url)
 
 # Merge on date
-merged = pd.merge(shiller_df, fred_df, on='date', how='inner')
+
+# Shift PPIACO 10 years forward (120 months)
+
+# Shift PPIACO 10 years forward (120 months) and keep original date for tooltip
+fred_df_shifted = fred_df.copy()
+fred_df_shifted['original_date'] = fred_df_shifted['date']
+fred_df_shifted['date'] = fred_df_shifted['date'] + pd.DateOffset(years=10)
+
+# Merge on date
+merged = pd.merge(shiller_df, fred_df_shifted, on='date', how='inner')
 
 # Interactive Plotly chart
 import plotly.graph_objects as go
 fig = go.Figure()
-fig.add_trace(go.Scatter(x=merged['date'], y=merged['S&P Comp. P'], name='S&P Comp. P', yaxis='y1', mode='lines+markers', line=dict(color='blue'), marker=dict(color='blue'), hovertemplate='Date: %{x}<br>S&P Comp. P: %{y:.2f}<extra></extra>'))
-fig.add_trace(go.Scatter(x=merged['date'], y=merged['PPIACO'], name='PPIACO', yaxis='y2', mode='lines+markers', line=dict(color='red'), marker=dict(color='red'), hovertemplate='Date: %{x}<br>PPIACO: %{y:.2f}<extra></extra>'))
+fig.add_trace(go.Scatter(
+    x=merged['date'],
+    y=merged['S&P Comp. P'],
+    name='S&P Comp. P',
+    yaxis='y1',
+    mode='lines+markers',
+    line=dict(color='blue'),
+    marker=dict(color='blue'),
+    hovertemplate='Date: %{x}<br>S&P Comp. P: %{y:.2f}<extra></extra>'
+))
+fig.add_trace(go.Scatter(
+    x=merged['date'],
+    y=merged['PPIACO'],
+    name='PPIACO',
+    yaxis='y2',
+    mode='lines+markers',
+    line=dict(color='red'),
+    marker=dict(color='red'),
+    customdata=merged['original_date'],
+    hovertemplate='Shifted Date: %{x}<br>Original Date: %{customdata|%Y-%m}<br>PPIACO: %{y:.2f}<extra></extra>'
+))
 fig.update_layout(
     xaxis=dict(title='Date'),
     yaxis=dict(title='S&P Comp. P', tickfont=dict(color='blue')),
