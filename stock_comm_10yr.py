@@ -21,7 +21,12 @@ def get_fred_ppiaco(api_key):
 # --- 2. Get Shiller S&P data from XLS ---
 def get_shiller_data(xls_url):
     df = pd.read_excel(xls_url, skiprows=7, engine="xlrd")  # Skip explainer rows, specify engine for .xls
-    df = df.loc[:, ['Date', 'S&P Comp. P']]  # Select columns by name
+    print("Columns in XLS:", df.columns.tolist())  # Debug print, will show in Streamlit terminal/logs
+    # Robust column selection
+    date_col = next((col for col in df.columns if 'Date' in col), df.columns[0])
+    sp_col = next((col for col in df.columns if 'Comp' in col or 'S&P' in col), df.columns[1])
+    df = df.loc[:, [date_col, sp_col]]
+    df.columns = ['Date', 'S&P Comp. P']
     # Parse date
     df['Date'] = df['Date'].astype(str)
     df = df[df['Date'].str.contains(r'^\d{4}\.\d{2}$')]  # Only rows with YYYY.MM
