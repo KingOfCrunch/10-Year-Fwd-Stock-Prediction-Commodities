@@ -20,10 +20,16 @@ def get_fred_ppiaco(api_key):
 
 # --- 2. Get Shiller S&P data from XLS ---
 def get_shiller_data(xls_url):
-    df = pd.read_excel(xls_url, skiprows=7, engine="xlrd")  # Skip explainer rows, specify engine for .xls
+    df = pd.read_excel(xls_url, skiprows=7, engine="xlrd", sheet_name="Data")  # Skip explainer rows, specify engine for .xls and sheet name
     print("Columns in XLS:", df.columns.tolist())  # Debug print, will show in Streamlit terminal/logs
     # Use 'Date' and 'P' columns, rename 'P' to 'S&P Comp. P'
-    df = df.loc[:, ['Date', 'P']]
+    # Robust column selection by partial match
+    date_col = next((col for col in df.columns if 'Date' in col), df.columns[0])
+    p_col = next((col for col in df.columns if col.strip() == 'P'), None)
+    if not p_col:
+        # fallback: use second column if 'P' not found
+        p_col = df.columns[1]
+    df = df.loc[:, [date_col, p_col]]
     df.columns = ['Date', 'S&P Comp. P']
     # Parse date
     df['Date'] = df['Date'].astype(str)
