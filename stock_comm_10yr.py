@@ -21,8 +21,7 @@ def get_fred_ppiaco(api_key):
 # --- 2. Get Shiller S&P data from XLS ---
 def get_shiller_data(xls_url):
     df = pd.read_excel(xls_url, skiprows=7, engine="xlrd")  # Skip explainer rows, specify engine for .xls
-    df = df.iloc[:, :2]  # Keep only first two columns
-    df.columns = ['Date', 'S&P Comp. P']
+    df = df.loc[:, ['Date', 'S&P Comp. P']]  # Select columns by name
     # Parse date
     df['Date'] = df['Date'].astype(str)
     df = df[df['Date'].str.contains(r'^\d{4}\.\d{2}$')]  # Only rows with YYYY.MM
