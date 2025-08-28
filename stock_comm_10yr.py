@@ -22,10 +22,8 @@ def get_fred_ppiaco(api_key):
 def get_shiller_data(xls_url):
     df = pd.read_excel(xls_url, skiprows=7, engine="xlrd")  # Skip explainer rows, specify engine for .xls
     print("Columns in XLS:", df.columns.tolist())  # Debug print, will show in Streamlit terminal/logs
-    # Robust column selection
-    date_col = next((col for col in df.columns if 'Date' in col), df.columns[0])
-    sp_col = next((col for col in df.columns if 'Comp' in col or 'S&P' in col), df.columns[1])
-    df = df.loc[:, [date_col, sp_col]]
+    # Use 'Date' and 'P' columns, rename 'P' to 'S&P Comp. P'
+    df = df.loc[:, ['Date', 'P']]
     df.columns = ['Date', 'S&P Comp. P']
     # Parse date
     df['Date'] = df['Date'].astype(str)
